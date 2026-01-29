@@ -1,4 +1,3 @@
-
 body {
     font-family: 'Noto Sans KR', sans-serif;
     display: flex;
@@ -150,14 +149,28 @@ body {
 }
 
 .toggle-vis-btn {
-    margin-left: 8px;
-    padding: 2px 8px;
-    font-size: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    background-color: #f0f0f0;
-    color: #555;
+    background: none;
+    border: none;
     cursor: pointer;
+    padding: 0 5px;
+    margin-left: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #888;
+}
+
+.toggle-vis-btn:hover {
+    color: #6e8efb;
+}
+
+.toggle-vis-btn svg {
+    width: 20px;
+    height: 20px;
+}
+
+.hidden {
+    display: none;
 }
 
 

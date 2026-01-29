@@ -123,9 +123,11 @@ function resetVisibility() {
     isHanjaVisible = true;
     isHunVisible = true;
     isEumVisible = true;
-    toggleHanjaBtn.textContent = '가리기';
-    toggleHunBtn.textContent = '가리기';
-    toggleEumBtn.textContent = '가리기';
+
+    [toggleHanjaBtn, toggleHunBtn, toggleEumBtn].forEach(btn => {
+        btn.querySelector('.icon-eye-open').classList.remove('hidden');
+        btn.querySelector('.icon-eye-closed').classList.add('hidden');
+    });
 }
 
 function displayHanjaGrid(level) {
@@ -206,8 +208,12 @@ function handleVisibilityToggle(type) {
         cellClass = '.eum-cell';
         hiddenClass = 'eum-hidden';
     }
+    
+    const eyeOpen = btn.querySelector('.icon-eye-open');
+    const eyeClosed = btn.querySelector('.icon-eye-closed');
+    eyeOpen.classList.toggle('hidden', !isVisible);
+    eyeClosed.classList.toggle('hidden', isVisible);
 
-    btn.textContent = isVisible ? '가리기' : '보이기';
     const cells = document.querySelectorAll(cellClass);
     cells.forEach(cell => {
         cell.classList.toggle(hiddenClass, !isVisible);
