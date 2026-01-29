@@ -1,1 +1,334 @@
-/* Add styles here */
+
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f0f2f5;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.container {
+    text-align: center;
+    width: 100%;
+    max-width: 500px;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+#hanja-grid-page {
+    display: none;
+    height: 100%;
+    width: 100%;
+    max-width: 600px;
+    justify-content: flex-start;
+}
+
+.logo {
+    font-family: 'Yeon Sung', cursive;
+    font-size: 60px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    background: linear-gradient(45deg, #6e8efb, #a777e3);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+
+.welcome-message {
+    font-size: 22px;
+    color: #555;
+    margin-bottom: 40px;
+}
+
+#enter-btn {
+    padding: 15px 40px;
+    font-size: 20px;
+    border: none;
+    border-radius: 50px;
+    background: linear-gradient(45deg, #6e8efb, #a777e3);
+    color: white;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 20px rgba(110, 142, 251, 0.4);
+}
+
+#enter-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 25px rgba(110, 142, 251, 0.6);
+}
+
+.title {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+#home-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: none;
+    border: none;
+    font-size: 16px;
+    color: #7f8c8d;
+    cursor: pointer;
+    transition: color 0.3s;
+    z-index: 10;
+}
+
+#home-btn:hover {
+    color: #34495e;
+}
+
+.level-selection-subtitle {
+    font-size: 18px;
+    color: #7f8c8d;
+    margin-bottom: 40px;
+}
+
+.level-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    width: 100%;
+    overflow-y: auto;
+}
+
+.level-btn {
+    padding: 20px;
+    font-size: 18px;
+    font-weight: 500;
+    border: none;
+    border-radius: 15px;
+    background: linear-gradient(135deg, #ffffff, #f9f9f9);
+    color: #34495e;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+}
+
+.level-btn:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    color: #6e8efb;
+}
+
+#grid-header, #grid-controls {
+    flex: 0 0 10%;
+    display: flex;
+    align-items: center;
+}
+
+#grid-header {
+    justify-content: flex-start;
+    align-items: baseline;
+    padding-left: 20px;
+}
+
+#grid-controls { justify-content: flex-end; padding-right: 20px; }
+
+#grid-title {
+    font-size: 36px;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 0;
+}
+
+#hanja-count {
+    margin-left: 10px;
+    font-size: 18px;
+    color: #7f8c8d;
+}
+
+.toggle-vis-btn {
+    margin-left: 8px;
+    padding: 2px 8px;
+    font-size: 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #f0f0f0;
+    color: #555;
+    cursor: pointer;
+}
+
+
+#back-to-levels-btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    background-color: #7f8c8d;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#back-to-levels-btn:hover { background-color: #6c7a7d; }
+
+#hanja-grid-container {
+    flex: 1;
+    overflow-y: auto;
+    position: relative;
+    border-top: 1px solid #e0e0e0;
+}
+
+.hanja-grid-header {
+    display: grid;
+    grid-template-columns: 0.5fr 1.2fr 1.2fr 1.2fr 1fr;
+    font-weight: bold;
+    color: #34495e;
+    background-color: #f8f9fa;
+    padding: 15px 10px;
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.hanja-grid-header .grid-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#hanja-grid {
+    display: grid;
+    grid-template-columns: 0.5fr 1.2fr 1.2fr 1.2fr 1fr;
+    gap: 10px;
+    padding: 10px;
+}
+
+.grid-row { display: contents; }
+
+#hanja-grid .grid-item {
+    padding: 15px 5px;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    text-align: center;
+}
+
+.grid-item.hanja-cell:hover { background-color: #f0f2f5; }
+
+.grid-item.hanja-hidden,
+.grid-item.hun-hidden,
+.grid-item.eum-hidden {
+    visibility: hidden;
+}
+
+.modal {
+    position: fixed;
+    z-index: 100;
+    left: 0; top: 0;
+    width: 100%; height: 100%;
+    background-color: rgba(0,0,0,0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: #aaa;
+    font-size: 30px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close-btn:hover, .close-btn:focus {
+    color: #000;
+}
+
+#modal-hanja {
+    font-size: 100px;
+    margin: 0;
+    font-weight: bold;
+    color: #333;
+}
+
+#modal-details {
+    font-size: 20px;
+    color: #555;
+    margin: 10px 0 20px 0;
+}
+
+#stroke-order-animation {
+    width: 100%;
+    height: 200px;
+    display: none;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+#writing-canvas {
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    cursor: crosshair;
+    touch-action: none;
+    width: 100%;
+    height: 200px;
+    background-color: #fdfdfd;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    width: 100%;
+    margin-top: 20px;
+}
+
+#reset-canvas-btn, #toggle-stroke-order-btn {
+    padding: 10px 25px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#reset-canvas-btn {
+    background-color: #6e8efb;
+}
+
+#reset-canvas-btn:hover {
+    background-color: #5a78e6;
+}
+
+#toggle-stroke-order-btn {
+    background-color: #7f8c8d;
+}
+
+#toggle-stroke-order-btn:hover {
+    background-color: #6c7a7d;
+}
