@@ -19,10 +19,10 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center; /* Center content horizontally */
+    align-items: center; 
 }
 
-#hanja-grid-page {
+#hanja-grid-page, #hanja-word-card-page {
     display: none;
     height: 100%;
     width: 100%;
@@ -68,13 +68,13 @@ body {
 .title {
     font-size: 48px;
     font-weight: bold;
-    margin-bottom: 40px; /* Increased margin */
+    margin-bottom: 40px; 
     color: #2c3e50;
 }
 
 #home-btn {
     position: absolute;
-    top: 20px; /* Adjusted position */
+    top: 20px; 
     left: 20px;
     background: none;
     border: none;
@@ -95,7 +95,6 @@ body {
     margin-bottom: 40px;
 }
 
-/* Menu Styles */
 .menu-buttons {
     display: flex;
     flex-direction: column;
@@ -204,7 +203,7 @@ body {
 }
 
 
-#back-to-levels-btn {
+#back-to-levels-btn, #back-to-menu-from-hanja-word-card-btn {
     padding: 10px 20px;
     font-size: 16px;
     border: none;
@@ -215,7 +214,9 @@ body {
     transition: background-color 0.3s;
 }
 
-#back-to-levels-btn:hover { background-color: #6c7a7d; }
+#back-to-levels-btn:hover, #back-to-menu-from-hanja-word-card-btn:hover {
+    background-color: #6c7a7d; 
+}
 
 #hanja-grid-container {
     flex: 1;
@@ -396,7 +397,7 @@ body {
     transition: background-color 0.3s;
     align-self: center;
     max-width: 200px;
-    margin-top: 20px; /* Added margin to separate from other elements */
+    margin-top: 20px; 
 }
 
 #back-to-menu-from-quiz-btn:hover,
@@ -406,32 +407,66 @@ body {
     background-color: #6c7a7d;
 }
 
-/* Quiz Page Styles */
+
 #quiz-controls {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
     width: 100%;
     margin-bottom: 20px;
 }
 
-#quiz-level-select {
-    padding: 8px 12px;
-    font-size: 16px;
-    border-radius: 10px;
+.quiz-level-select-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    justify-content: center;
+}
+
+#quiz-controls select, #hanja-card-controls select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-color: #fff;
     border: 1px solid #ccc;
+    border-radius: 25px;
+    padding: 8px 35px 8px 15px;
+    font-size: 14px;
+    color: #34495e;
+    cursor: pointer;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg xmlns="http://www.w3.org/2000/svg" width="292.4" height="292.4" viewBox="0 0 292.4 292.4"><path fill="%236e8efb" d="M287 69.4a17.6 17.6 0 0 0-13-5.4H18.4c-5 0-9.3 1.8-12.9 5.4A17.6 17.6 0 0 0 0 82.2c0 5 1.8 9.3 5.4 12.9l128 127.9c3.6 3.6 7.8 5.4 12.9 5.4s9.3-1.8 12.9-5.4L287 95.1c3.6-3.6 5.4-7.8 5.4-12.9 0-5-1.8-9.2-5.4-12.8z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 10px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    flex-grow: 1;
+    max-width: 150px;
+}
+
+#quiz-controls select:hover, #hanja-card-controls select:hover {
+    border-color: #6e8efb;
+    box-shadow: 0 0 5px rgba(110, 142, 251, 0.5);
 }
 
 #quiz-score {
     font-size: 18px;
     font-weight: bold;
     color: #34495e;
+    text-align: right;
+    align-self: center;
+    padding: 0 10px;
 }
 
 #quiz-question {
-    font-size: 80px;
+    font-size: 60px;
     font-weight: bold;
     margin-bottom: 30px;
+    min-height: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #quiz-options {
@@ -442,14 +477,21 @@ body {
 }
 
 .quiz-option-btn {
-    padding: 20px;
-    font-size: 18px;
+    padding: 15px;
+    font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 15px;
     background-color: #fff;
     cursor: pointer;
     transition: background-color 0.3s, transform 0.2s;
+    word-break: keep-all;
 }
+
+.quiz-option-btn.hanja-option {
+    font-size: 36px;
+    font-weight: bold;
+}
+
 
 .quiz-option-btn:hover:not(:disabled) {
     background-color: #f0f2f5;
@@ -475,7 +517,80 @@ body {
     height: 30px;
 }
 
-/* Find Hanja Page Styles */
+
+#hanja-card-controls {
+    width: 100%;
+    margin-bottom: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.hanja-card-level-select-container {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    justify-content: center;
+}
+
+#hanja-card-container {
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 20px;
+    padding: 10px;
+}
+
+.hanja-card {
+    perspective: 1000px;
+    cursor: pointer;
+}
+
+.hanja-card-inner {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%; 
+    text-align: center;
+    transition: transform 0.6s;
+    transform-style: preserve-3d;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    border-radius: 15px;
+}
+
+.hanja-card.flipped .hanja-card-inner {
+    transform: rotateY(180deg);
+}
+
+.hanja-card-front, .hanja-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 15px;
+    background-color: #fff;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+.hanja-card-front {
+    font-weight: bold;
+    color: #34495e;
+}
+
+.hanja-card-back {
+    transform: rotateY(180deg);
+    color: #2c3e50;
+    flex-direction: column;
+}
+
+
 #search-bar {
     display: flex;
     width: 100%;
@@ -542,4 +657,94 @@ body {
 
 .search-result-row:hover > div {
     background-color: #f0f2f5;
+}
+
+#idiom-page {
+    justify-content: flex-start;
+}
+
+#idiom-page .title {
+    margin-bottom: 10px;
+}
+
+.idiom-subtitle {
+    font-size: 14px;
+    color: #888;
+    margin-bottom: 30px;
+}
+
+#idiom-list {
+    width: 100%;
+    max-width: 600px;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex-grow: 1;
+}
+
+.idiom-item {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    text-align: left;
+}
+
+.idiom-item h3 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #34495e;
+    margin: 0 0 10px 0;
+}
+
+.idiom-item p {
+    font-size: 16px;
+    color: #555;
+    margin: 0;
+}
+
+.idiom-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    width: 100%;
+    max-width: 600px;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+#new-idiom-btn {
+    flex-grow: 1;
+    padding: 12px 25px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    background: linear-gradient(45deg, #6e8efb, #a777e3);
+    color: white;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 15px rgba(110, 142, 251, 0.4);
+}
+
+#new-idiom-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(110, 142, 251, 0.6);
+}
+
+#back-to-menu-from-idiom-btn {
+    flex-shrink: 0;
+    padding: 12px 25px;
+    font-size: 16px;
+    border: none;
+    border-radius: 25px;
+    background-color: #7f8c8d;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#back-to-menu-from-idiom-btn:hover {
+    background-color: #6c7a7d;
 }

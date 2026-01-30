@@ -1,4 +1,6 @@
+
 import { hanjaData } from './data.js';
+import { idiomData } from './idioms.js';
 
 let currentLevelData = [];
 let currentHanja = null;
@@ -14,20 +16,24 @@ const menuPage = document.getElementById('menu-page');
 const levelSelectionPage = document.getElementById('level-selection-page');
 const hanjaGridPage = document.getElementById('hanja-grid-page');
 const quizPage = document.getElementById('quiz-page');
-const hanjaWordPage = document.getElementById('hanja-word-page');
+const hanjaWordCardPage = document.getElementById('hanja-word-card-page');
 const findHanjaPage = document.getElementById('find-hanja-page');
+const idiomPage = document.getElementById('idiom-page');
 
 // Button Elements
 const enterBtn = document.getElementById('enter-btn');
 const homeBtn = document.getElementById('home-btn');
 const levelSelectionBtn = document.getElementById('level-selection-btn');
 const quizBtn = document.getElementById('quiz-btn');
-const hanjaWordBtn = document.getElementById('hanja-word-btn');
+const hanjaWordCardBtn = document.getElementById('hanja-word-card-btn');
 const findHanjaBtn = document.getElementById('find-hanja-btn');
+const idiomBtn = document.getElementById('idiom-btn');
 const backToMenuFromLevelsBtn = document.getElementById('back-to-menu-from-levels-btn');
 const backToMenuFromQuizBtn = document.getElementById('back-to-menu-from-quiz-btn');
-const backToMenuFromHanjaWordBtn = document.getElementById('back-to-menu-from-hanja-word-btn');
+const backToMenuFromHanjaWordCardBtn = document.getElementById('back-to-menu-from-hanja-word-card-btn');
 const backToMenuFromFindHanjaBtn = document.getElementById('back-to-menu-from-find-hanja-btn');
+const backToMenuFromIdiomBtn = document.getElementById('back-to-menu-from-idiom-btn');
+const newIdiomBtn = document.getElementById('new-idiom-btn');
 const levelButtonsContainer = document.querySelector('.level-buttons');
 const backToLevelsBtn = document.getElementById('back-to-levels-btn');
 const toggleHanjaBtn = document.getElementById('toggle-hanja-btn');
@@ -54,17 +60,29 @@ const ctx = canvas.getContext('2d');
 let isDrawing = false;
 
 // Quiz Elements
-const quizLevelSelect = document.getElementById('quiz-level-select');
+const quizLevelFromSelect = document.getElementById('quiz-level-from');
+const quizLevelToSelect = document.getElementById('quiz-level-to');
+const quizTypeSelect = document.getElementById('quiz-type-select');
 const quizScoreEl = document.getElementById('quiz-score');
 const quizQuestion = document.getElementById('quiz-question');
 const quizOptions = document.getElementById('quiz-options');
 const quizResult = document.getElementById('quiz-result');
+
+// Hanja Card Elements
+const hanjaCardLevelFromSelect = document.getElementById('hanja-card-level-from');
+const hanjaCardLevelToSelect = document.getElementById('hanja-card-level-to');
+const hanjaCardTypeSelect = document.getElementById('hanja-card-type-select');
+const hanjaCardContainer = document.getElementById('hanja-card-container');
 
 // Search Elements
 const searchInput = document.getElementById('search-input');
 const searchBtn = document.getElementById('search-btn');
 const searchResults = document.getElementById('search-results');
 
+// Idiom Elements
+const idiomList = document.getElementById('idiom-list');
+
+const levelOrder = ['8급', '준7급', '7급', '준6급', '6급', '준5급', '5급', '준4급', '4급', '준3급', '3급', '2급', '1급', '특급'];
 
 function setupCanvas() {
     const rect = canvas.getBoundingClientRect();
@@ -246,38 +264,60 @@ function handleVisibilityToggle(type) {
     });
 }
 
-function populateQuizLevelSelect() {
-    quizLevelSelect.innerHTML = '<option value="전체">전체</option>';
-    for (const level in hanjaData) {
-        const option = document.createElement('option');
-        option.value = level;
-        option.textContent = level;
-        quizLevelSelect.appendChild(option);
-    }
+function populateQuizLevelSelects() {
+    quizLevelFromSelect.innerHTML = '';
+    quizLevelToSelect.innerHTML = '';
+
+    levelOrder.forEach(level => {
+        const option1 = document.createElement('option');
+        option1.value = level;
+        option1.textContent = level;
+        quizLevelFromSelect.appendChild(option1);
+
+        const option2 = document.createElement('option');
+        option2.value = level;
+        option2.textContent = level;
+        quizLevelToSelect.appendChild(option2);
+    });
+
+    quizLevelFromSelect.value = levelOrder[0];
+    quizLevelToSelect.value = levelOrder[levelOrder.length - 1];
 }
 
 function generateQuiz() {
-    const selectedLevel = quizLevelSelect.value;
+    const fromLevel = quizLevelFromSelect.value;
+    const toLevel = quizLevelToSelect.value;
+    const quizType = quizTypeSelect.value;
+    const fromIndex = levelOrder.indexOf(fromLevel);
+    const toIndex = levelOrder.indexOf(toLevel);
+
     let quizData = [];
 
-    if (selectedLevel === '전체') {
-        for (const level in hanjaData) {
+    if (fromIndex > toIndex) {
+        quizQuestion.textContent = '시작 급수를 종료 급수보다 낮게 설정해주세요.';
+        quizOptions.innerHTML = '';
+        quizResult.textContent = '';
+        return;
+    }
+
+    for (let i = fromIndex; i <= toIndex; i++) {
+        const level = levelOrder[i];
+        if (hanjaData[level]) {
             quizData = quizData.concat(hanjaData[level]);
         }
-    } else {
-        quizData = hanjaData[selectedLevel];
     }
 
     if (quizData.length < 4) {
-        quizQuestion.textContent = '데이터가 부족합니다.';
+        quizQuestion.textContent = '선택하신 급수 범위에 한자가 충분하지 않습니다.';
         quizOptions.innerHTML = '';
+        quizResult.textContent = '';
         return;
     }
 
     // Select a random hanja for the question
     const questionIndex = Math.floor(Math.random() * quizData.length);
     const questionHanja = quizData[questionIndex];
-    quizQuestion.textContent = questionHanja.hanja;
+    quizQuestion.dataset.hanja = questionHanja.hanja; // Store the correct hanja in a data attribute
 
     // Create options
     let options = [questionHanja];
@@ -292,11 +332,29 @@ function generateQuiz() {
     // Shuffle options
     options.sort(() => Math.random() - 0.5);
 
-    // Display options
     const optionButtons = quizOptions.querySelectorAll('.quiz-option-btn');
-    optionButtons.forEach((button, index) => {
-        button.textContent = `${options[index].hun} ${options[index].eum}`;
-        button.dataset.hanja = options[index].hanja;
+    optionButtons.forEach(button => button.classList.remove('hanja-option'));
+
+    if (quizType === 'hanja-to-hun-eum') {
+        quizQuestion.textContent = questionHanja.hanja;
+        quizQuestion.style.fontSize = '80px';
+
+        optionButtons.forEach((button, index) => {
+            button.textContent = `${options[index].hun} ${options[index].eum}`;
+            button.dataset.hanja = options[index].hanja;
+        });
+    } else { // hun-eum-to-hanja
+        quizQuestion.textContent = `${questionHanja.hun} ${questionHanja.eum}`;
+        quizQuestion.style.fontSize = '24px';
+
+        optionButtons.forEach((button, index) => {
+            button.textContent = options[index].hanja;
+            button.dataset.hanja = options[index].hanja;
+            button.classList.add('hanja-option');
+        });
+    }
+
+    optionButtons.forEach(button => {
         button.disabled = false;
         button.classList.remove('correct', 'incorrect');
     });
@@ -304,32 +362,121 @@ function generateQuiz() {
     quizResult.textContent = '';
 }
 
-function checkQuizAnswer(selectedHanja) {
-    const questionHanja = quizQuestion.textContent;
+function checkQuizAnswer(selectedAnswer) {
+    const questionHanjaChar = quizQuestion.dataset.hanja;
+    const isCorrect = selectedAnswer === questionHanjaChar;
+
     const optionButtons = quizOptions.querySelectorAll('.quiz-option-btn');
+    optionButtons.forEach(button => button.disabled = true);
 
-    optionButtons.forEach(button => {
-        button.disabled = true;
-    });
-
-    if (selectedHanja === questionHanja) {
+    if (isCorrect) {
         quizScore++;
         quizResult.textContent = '맞음';
         quizResult.style.color = 'green';
-        const correctButton = Array.from(optionButtons).find(btn => btn.dataset.hanja === selectedHanja);
-        correctButton.classList.add('correct');
     } else {
         quizResult.textContent = '틀림';
         quizResult.style.color = 'red';
-        const correctButton = Array.from(optionButtons).find(btn => btn.dataset.hanja === questionHanja);
-        correctButton.classList.add('correct');
-        const incorrectButton = Array.from(optionButtons).find(btn => btn.dataset.hanja === selectedHanja);
-        incorrectButton.classList.add('incorrect');
     }
+
+    optionButtons.forEach(button => {
+        if (button.dataset.hanja === questionHanjaChar) {
+            button.classList.add('correct');
+        } else if (button.dataset.hanja === selectedAnswer) {
+            if (!isCorrect) {
+                button.classList.add('incorrect');
+            }
+        }
+    });
 
     quizScoreEl.textContent = `점수: ${quizScore}`;
 
     setTimeout(generateQuiz, 2000);
+}
+
+
+function populateHanjaCardLevelSelects() {
+    hanjaCardLevelFromSelect.innerHTML = '';
+    hanjaCardLevelToSelect.innerHTML = '';
+
+    levelOrder.forEach(level => {
+        const option1 = document.createElement('option');
+        option1.value = level;
+        option1.textContent = level;
+        hanjaCardLevelFromSelect.appendChild(option1);
+
+        const option2 = document.createElement('option');
+        option2.value = level;
+        option2.textContent = level;
+        hanjaCardLevelToSelect.appendChild(option2);
+    });
+
+    hanjaCardLevelFromSelect.value = levelOrder[0];
+    hanjaCardLevelToSelect.value = levelOrder[levelOrder.length - 1];
+}
+
+function generateHanjaCards() {
+    const fromLevel = hanjaCardLevelFromSelect.value;
+    const toLevel = hanjaCardLevelToSelect.value;
+    const cardType = hanjaCardTypeSelect.value;
+    const fromIndex = levelOrder.indexOf(fromLevel);
+    const toIndex = levelOrder.indexOf(toLevel);
+
+    let cardData = [];
+
+    if (fromIndex > toIndex) {
+        hanjaCardContainer.innerHTML = '<p style="text-align: center; grid-column: 1 / -1;">시작 급수를 종료 급수보다 낮게 설정해주세요.</p>';
+        return;
+    }
+
+    for (let i = fromIndex; i <= toIndex; i++) {
+        const level = levelOrder[i];
+        if (hanjaData[level]) {
+            cardData = cardData.concat(hanjaData[level]);
+        }
+    }
+
+    hanjaCardContainer.innerHTML = '';
+
+    if (cardData.length === 0) {
+        hanjaCardContainer.innerHTML = '<p style="text-align: center; grid-column: 1 / -1;">선택하신 급수 범위에 한자가 없습니다.</p>';
+        return;
+    }
+
+    cardData.forEach(item => {
+        const card = document.createElement('div');
+        card.className = 'hanja-card';
+
+        const isHanjaToHunEum = cardType === 'hanja-to-hun-eum';
+        const frontContent = isHanjaToHunEum ? item.hanja : `${item.hun} ${item.eum}`;
+        const backContent = isHanjaToHunEum ? `${item.hun} ${item.eum}` : item.hanja;
+
+        const frontEl = document.createElement('div');
+        frontEl.className = 'hanja-card-front';
+        frontEl.textContent = frontContent;
+
+        const backEl = document.createElement('div');
+        backEl.className = 'hanja-card-back';
+        backEl.textContent = backContent;
+        
+        if (isHanjaToHunEum) {
+            frontEl.style.fontSize = '40px';
+            backEl.style.fontSize = '20px';
+        } else {
+            frontEl.style.fontSize = '20px';
+            backEl.style.fontSize = '40px';
+        }
+
+        const inner = document.createElement('div');
+        inner.className = 'hanja-card-inner';
+        inner.appendChild(frontEl);
+        inner.appendChild(backEl);
+        card.appendChild(inner);
+
+        card.addEventListener('click', () => {
+            card.classList.toggle('flipped');
+        });
+        hanjaCardContainer.appendChild(card);
+    });
 }
 
 function searchHanja() {
@@ -391,6 +538,43 @@ function displaySearchResults(results) {
     searchResults.appendChild(resultGrid);
 }
 
+function displayIdioms(idioms) {
+    idiomList.innerHTML = '';
+    idioms.forEach(idiom => {
+        const item = document.createElement('div');
+        item.className = 'idiom-item';
+        item.innerHTML = `
+            <h3>${idiom.hanja} (${idiom.eum})</h3>
+            <p>${idiom.meaning}</p>
+        `;
+        idiomList.appendChild(item);
+    });
+}
+
+function generateAndShowNewIdioms() {
+    const shuffledIdioms = [...idiomData].sort(() => 0.5 - Math.random());
+    const selectedIdioms = shuffledIdioms.slice(0, 5);
+    const today = new Date().toISOString().slice(0, 10);
+
+    localStorage.setItem('todaysIdioms', JSON.stringify(selectedIdioms));
+    localStorage.setItem('idiomDate', today);
+
+    displayIdioms(selectedIdioms);
+}
+
+function showTodaysIdioms() {
+    const today = new Date().toISOString().slice(0, 10);
+    const storedDate = localStorage.getItem('idiomDate');
+    const storedIdioms = localStorage.getItem('todaysIdioms');
+
+    if (storedDate === today && storedIdioms) {
+        displayIdioms(JSON.parse(storedIdioms));
+    } else {
+        generateAndShowNewIdioms();
+    }
+}
+
+
 // --- Event Listeners ---
 
 enterBtn.addEventListener('click', () => {
@@ -399,7 +583,7 @@ enterBtn.addEventListener('click', () => {
 });
 
 homeBtn.addEventListener('click', () => {
-    [menuPage, levelSelectionPage, hanjaGridPage, quizPage, hanjaWordPage, findHanjaPage].forEach(p => p.style.display = 'none');
+    [menuPage, levelSelectionPage, hanjaGridPage, quizPage, hanjaWordCardPage, findHanjaPage, idiomPage].forEach(p => p.style.display = 'none');
     landingPage.style.display = 'flex';
 });
 
@@ -411,21 +595,31 @@ levelSelectionBtn.addEventListener('click', () => {
 quizBtn.addEventListener('click', () => {
     menuPage.style.display = 'none';
     quizPage.style.display = 'flex';
-    populateQuizLevelSelect();
+    populateQuizLevelSelects();
     generateQuiz();
     quizScore = 0;
     quizScoreEl.textContent = `점수: ${quizScore}`;
 });
 
-hanjaWordBtn.addEventListener('click', () => {
+hanjaWordCardBtn.addEventListener('click', () => {
     menuPage.style.display = 'none';
-    hanjaWordPage.style.display = 'flex';
+    hanjaWordCardPage.style.display = 'flex';
+    populateHanjaCardLevelSelects();
+    generateHanjaCards();
 });
 
 findHanjaBtn.addEventListener('click', () => {
     menuPage.style.display = 'none';
     findHanjaPage.style.display = 'flex';
 });
+
+idiomBtn.addEventListener('click', () => {
+    menuPage.style.display = 'none';
+    idiomPage.style.display = 'flex';
+    showTodaysIdioms();
+});
+
+newIdiomBtn.addEventListener('click', generateAndShowNewIdioms);
 
 backToMenuFromLevelsBtn.addEventListener('click', () => {
     levelSelectionPage.style.display = 'none';
@@ -437,13 +631,18 @@ backToMenuFromQuizBtn.addEventListener('click', () => {
     menuPage.style.display = 'flex';
 });
 
-backToMenuFromHanjaWordBtn.addEventListener('click', () => {
-    hanjaWordPage.style.display = 'none';
+backToMenuFromHanjaWordCardBtn.addEventListener('click', () => {
+    hanjaWordCardPage.style.display = 'none';
     menuPage.style.display = 'flex';
 });
 
 backToMenuFromFindHanjaBtn.addEventListener('click', () => {
     findHanjaPage.style.display = 'none';
+    menuPage.style.display = 'flex';
+});
+
+backToMenuFromIdiomBtn.addEventListener('click', () => {
+    idiomPage.style.display = 'none';
     menuPage.style.display = 'flex';
 });
 
@@ -503,12 +702,21 @@ canvas.addEventListener('touchmove', draw, { passive: false });
 canvas.addEventListener('touchend', stopDrawing);
 
 // Quiz Event Listeners
-quizLevelSelect.addEventListener('change', generateQuiz);
+quizLevelFromSelect.addEventListener('change', generateQuiz);
+quizLevelToSelect.addEventListener('change', generateQuiz);
+quizTypeSelect.addEventListener('change', generateQuiz);
+
 quizOptions.addEventListener('click', (event) => {
     if (event.target.classList.contains('quiz-option-btn')) {
         checkQuizAnswer(event.target.dataset.hanja);
     }
 });
+
+// Hanja Card Event Listeners
+hanjaCardLevelFromSelect.addEventListener('change', generateHanjaCards);
+hanjaCardLevelToSelect.addEventListener('change', generateHanjaCards);
+hanjaCardTypeSelect.addEventListener('change', generateHanjaCards);
+
 
 // Search Event Listeners
 searchBtn.addEventListener('click', searchHanja);

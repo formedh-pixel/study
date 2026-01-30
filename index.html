@@ -24,8 +24,9 @@
         <div class="menu-buttons">
             <button class="menu-btn" id="level-selection-btn">급수 선택</button>
             <button class="menu-btn" id="quiz-btn">퀴즈</button>
-            <button class="menu-btn" id="hanja-word-btn">한자낱말</button>
+            <button class="menu-btn" id="hanja-word-card-btn">한자낱말카드</button>
             <button class="menu-btn" id="find-hanja-btn">한자 찾기</button>
+            <button class="menu-btn" id="idiom-btn">사자성어</button>
         </div>
     </div>
 
@@ -108,7 +109,19 @@
     <div class="container" id="quiz-page" style="display: none;">
         <h2 class="title">퀴즈</h2>
         <div id="quiz-controls">
-            <select id="quiz-level-select"></select>
+            <div class="quiz-level-select-container">
+                <select id="quiz-level-from"></select>
+                <span>~</span>
+                <select id="quiz-level-to"></select>
+            </div>
+            <select id="quiz-content-type-select">
+                <option value="hanja">낱말</option>
+                <option value="word">단어</option>
+            </select>
+            <select id="quiz-type-select">
+                <option value="hanja-to-hun-eum">한자 → 훈음</option>
+                <option value="hun-eum-to-hanja">훈음 → 한자</option>
+            </select>
             <span id="quiz-score">점수: 0</span>
         </div>
         <div id="quiz-question"></div>
@@ -122,10 +135,21 @@
         <button id="back-to-menu-from-quiz-btn">메뉴로 돌아가기</button>
     </div>
 
-    <div class="container" id="hanja-word-page" style="display: none;">
-        <h2 class="title">한자낱말</h2>
-        <p>한자낱말 기능은 현재 준비중입니다.</p>
-        <button id="back-to-menu-from-hanja-word-btn">메뉴로 돌아가기</button>
+    <div class="container" id="hanja-word-card-page" style="display: none;">
+        <h2 class="title">한자낱말카드</h2>
+        <div id="hanja-card-controls">
+            <div class="hanja-card-level-select-container">
+                <select id="hanja-card-level-from"></select>
+                <span>~</span>
+                <select id="hanja-card-level-to"></select>
+            </div>
+            <select id="hanja-card-type-select">
+                <option value="hanja-to-hun-eum">한자 → 훈음</option>
+                <option value="hun-eum-to-hanja">훈음 → 한자</option>
+            </select>
+        </div>
+        <div id="hanja-card-container"></div>
+        <button id="back-to-menu-from-hanja-word-card-btn">메뉴로 돌아가기</button>
     </div>
 
     <div class="container" id="find-hanja-page" style="display: none;">
@@ -136,6 +160,16 @@
         </div>
         <div id="search-results"></div>
         <button id="back-to-menu-from-find-hanja-btn">메뉴로 돌아가기</button>
+    </div>
+
+    <div class="container" id="idiom-page" style="display: none;">
+        <h2 class="title">오늘의 사자성어</h2>
+        <p class="idiom-subtitle">사자성어는 매일 변경 됩니다.</p>
+        <div id="idiom-list"></div>
+        <div class="idiom-buttons">
+            <button id="new-idiom-btn">새 사자성어 보기</button>
+            <button id="back-to-menu-from-idiom-btn">메뉴로 돌아가기</button>
+        </div>
     </div>
 
     <script type="module" src="main.js"></script>
