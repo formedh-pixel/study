@@ -385,7 +385,6 @@ function displaySearchResults(results) {
             <div>${item.eum}</div>
             <div>${item.strokes}</div>
         `;
-        row.addEventListener('click', () => openModal(item));
         resultGrid.appendChild(row);
     });
 
