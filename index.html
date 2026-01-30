@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Yeon+Sung&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5684980808299397"
+     crossorigin="anonymous"></script>
 </head>
 <body>
     <div class="container" id="landing-page">
@@ -17,10 +19,20 @@
         <button id="enter-btn">입장</button>
     </div>
 
+    <div class="container" id="menu-page" style="display: none;">
+        <h2 class="title">메뉴</h2>
+        <div class="menu-buttons">
+            <button class="menu-btn" id="level-selection-btn">급수 선택</button>
+            <button class="menu-btn" id="quiz-btn">퀴즈</button>
+            <button class="menu-btn" id="hanja-word-btn">한자낱말</button>
+            <button class="menu-btn" id="find-hanja-btn">한자 찾기</button>
+        </div>
+    </div>
+
     <div class="container" id="level-selection-page" style="display: none;">
         <button id="home-btn">home</button>
         <h2 class="title">급수선택</h2>
-        <p class="level-selection-subtitle">학습할 급수를 선택해주세요.</p>
+        <p class="level-selection-subtitle">학습 할 급수를 선택 해주세요.</p>
         <div class="level-buttons">
             <button class="level-btn">8급</button>
             <button class="level-btn">준7급</button>
@@ -37,6 +49,7 @@
             <button class="level-btn">1급</button>
             <button class="level-btn">특급</button>
         </div>
+        <button id="back-to-menu-from-levels-btn">메뉴로 돌아가기</button>
     </div>
 
     <div class="container" id="hanja-grid-page" style="display: none;">
@@ -90,6 +103,39 @@
                 <button id="reset-canvas-btn">다시쓰기</button>
             </div>
         </div>
+    </div>
+
+    <div class="container" id="quiz-page" style="display: none;">
+        <h2 class="title">퀴즈</h2>
+        <div id="quiz-controls">
+            <select id="quiz-level-select"></select>
+            <span id="quiz-score">점수: 0</span>
+        </div>
+        <div id="quiz-question"></div>
+        <div id="quiz-options">
+            <button class="quiz-option-btn"></button>
+            <button class="quiz-option-btn"></button>
+            <button class="quiz-option-btn"></button>
+            <button class="quiz-option-btn"></button>
+        </div>
+        <div id="quiz-result"></div>
+        <button id="back-to-menu-from-quiz-btn">메뉴로 돌아가기</button>
+    </div>
+
+    <div class="container" id="hanja-word-page" style="display: none;">
+        <h2 class="title">한자낱말</h2>
+        <p>한자낱말 기능은 현재 준비중입니다.</p>
+        <button id="back-to-menu-from-hanja-word-btn">메뉴로 돌아가기</button>
+    </div>
+
+    <div class="container" id="find-hanja-page" style="display: none;">
+        <h2 class="title">한자 찾기</h2>
+        <div id="search-bar">
+            <input type="text" id="search-input" placeholder="한자, 훈, 음으로 검색">
+            <button id="search-btn">찾기</button>
+        </div>
+        <div id="search-results"></div>
+        <button id="back-to-menu-from-find-hanja-btn">메뉴로 돌아가기</button>
     </div>
 
     <script type="module" src="main.js"></script>

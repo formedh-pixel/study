@@ -6,15 +6,28 @@ let writer = null;
 let isHanjaVisible = true;
 let isHunVisible = true;
 let isEumVisible = true;
+let quizScore = 0;
 
 // Page Elements
 const landingPage = document.getElementById('landing-page');
+const menuPage = document.getElementById('menu-page');
 const levelSelectionPage = document.getElementById('level-selection-page');
 const hanjaGridPage = document.getElementById('hanja-grid-page');
+const quizPage = document.getElementById('quiz-page');
+const hanjaWordPage = document.getElementById('hanja-word-page');
+const findHanjaPage = document.getElementById('find-hanja-page');
 
 // Button Elements
 const enterBtn = document.getElementById('enter-btn');
 const homeBtn = document.getElementById('home-btn');
+const levelSelectionBtn = document.getElementById('level-selection-btn');
+const quizBtn = document.getElementById('quiz-btn');
+const hanjaWordBtn = document.getElementById('hanja-word-btn');
+const findHanjaBtn = document.getElementById('find-hanja-btn');
+const backToMenuFromLevelsBtn = document.getElementById('back-to-menu-from-levels-btn');
+const backToMenuFromQuizBtn = document.getElementById('back-to-menu-from-quiz-btn');
+const backToMenuFromHanjaWordBtn = document.getElementById('back-to-menu-from-hanja-word-btn');
+const backToMenuFromFindHanjaBtn = document.getElementById('back-to-menu-from-find-hanja-btn');
 const levelButtonsContainer = document.querySelector('.level-buttons');
 const backToLevelsBtn = document.getElementById('back-to-levels-btn');
 const toggleHanjaBtn = document.getElementById('toggle-hanja-btn');
@@ -39,6 +52,19 @@ const canvas = document.getElementById('writing-canvas');
 const strokeOrderAnimationContainer = document.getElementById('stroke-order-animation');
 const ctx = canvas.getContext('2d');
 let isDrawing = false;
+
+// Quiz Elements
+const quizLevelSelect = document.getElementById('quiz-level-select');
+const quizScoreEl = document.getElementById('quiz-score');
+const quizQuestion = document.getElementById('quiz-question');
+const quizOptions = document.getElementById('quiz-options');
+const quizResult = document.getElementById('quiz-result');
+
+// Search Elements
+const searchInput = document.getElementById('search-input');
+const searchBtn = document.getElementById('search-btn');
+const searchResults = document.getElementById('search-results');
+
 
 function setupCanvas() {
     const rect = canvas.getBoundingClientRect();
@@ -220,21 +246,207 @@ function handleVisibilityToggle(type) {
     });
 }
 
+function populateQuizLevelSelect() {
+    quizLevelSelect.innerHTML = '<option value="전체">전체</option>';
+    for (const level in hanjaData) {
+        const option = document.createElement('option');
+        option.value = level;
+        option.textContent = level;
+        quizLevelSelect.appendChild(option);
+    }
+}
+
+function generateQuiz() {
+    const selectedLevel = quizLevelSelect.value;
+    let quizData = [];
+
+    if (selectedLevel === '전체') {
+        for (const level in hanjaData) {
+            quizData = quizData.concat(hanjaData[level]);
+        }
+    } else {
+        quizData = hanjaData[selectedLevel];
+    }
+
+    if (quizData.length < 4) {
+        quizQuestion.textContent = '데이터가 부족합니다.';
+        quizOptions.innerHTML = '';
+        return;
+    }
+
+    // Select a random hanja for the question
+    const questionIndex = Math.floor(Math.random() * quizData.length);
+    const questionHanja = quizData[questionIndex];
+    quizQuestion.textContent = questionHanja.hanja;
+
+    // Create options
+    let options = [questionHanja];
+    while (options.length < 4) {
+        const randomIndex = Math.floor(Math.random() * quizData.length);
+        const randomHanja = quizData[randomIndex];
+        if (!options.some(opt => opt.hanja === randomHanja.hanja)) {
+            options.push(randomHanja);
+        }
+    }
+
+    // Shuffle options
+    options.sort(() => Math.random() - 0.5);
+
+    // Display options
+    const optionButtons = quizOptions.querySelectorAll('.quiz-option-btn');
+    optionButtons.forEach((button, index) => {
+        button.textContent = `${options[index].hun} ${options[index].eum}`;
+        button.dataset.hanja = options[index].hanja;
+        button.disabled = false;
+        button.classList.remove('correct', 'incorrect');
+    });
+
+    quizResult.textContent = '';
+}
+
+function checkQuizAnswer(selectedHanja) {
+    const questionHanja = quizQuestion.textContent;
+    const optionButtons = quizOptions.querySelectorAll('.quiz-option-btn');
+
+    optionButtons.forEach(button => {
+        button.disabled = true;
+    });
+
+    if (selectedHanja === questionHanja) {
+        quizScore++;
+        quizResult.textContent = '맞음';
+        quizResult.style.color = 'green';
+        const correctButton = Array.from(optionButtons).find(btn => btn.dataset.hanja === selectedHanja);
+        correctButton.classList.add('correct');
+    } else {
+        quizResult.textContent = '틀림';
+        quizResult.style.color = 'red';
+        const correctButton = Array.from(optionButtons).find(btn => btn.dataset.hanja === questionHanja);
+        correctButton.classList.add('correct');
+        const incorrectButton = Array.from(optionButtons).find(btn => btn.dataset.hanja === selectedHanja);
+        incorrectButton.classList.add('incorrect');
+    }
+
+    quizScoreEl.textContent = `점수: ${quizScore}`;
+
+    setTimeout(generateQuiz, 2000);
+}
+
+function searchHanja() {
+    const searchTerm = searchInput.value.trim();
+    if (searchTerm === '') {
+        searchResults.innerHTML = '';
+        return;
+    }
+
+    let results = [];
+    for (const level in hanjaData) {
+        const levelData = hanjaData[level];
+        const filteredData = levelData.filter(item => 
+            item.hanja.includes(searchTerm) || 
+            item.hun.includes(searchTerm) || 
+            item.eum.includes(searchTerm)
+        );
+        results = results.concat(filteredData.map(item => ({...item, level})));
+    }
+
+    displaySearchResults(results);
+}
+
+function displaySearchResults(results) {
+    searchResults.innerHTML = '';
+
+    if (results.length === 0) {
+        searchResults.innerHTML = '<p>검색 결과가 없습니다.</p>';
+        return;
+    }
+
+    const resultGrid = document.createElement('div');
+    resultGrid.className = 'search-result-grid';
+
+    const header = document.createElement('div');
+    header.className = 'search-result-header';
+    header.innerHTML = `
+        <div>급수</div>
+        <div>한자</div>
+        <div>훈</div>
+        <div>음</div>
+        <div>총획</div>
+    `;
+    resultGrid.appendChild(header);
+
+    results.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'search-result-row';
+        row.innerHTML = `
+            <div>${item.level}</div>
+            <div>${item.hanja}</div>
+            <div>${item.hun}</div>
+            <div>${item.eum}</div>
+            <div>${item.strokes}</div>
+        `;
+        resultGrid.appendChild(row);
+    });
+
+    searchResults.appendChild(resultGrid);
+}
 
 // --- Event Listeners ---
 
 enterBtn.addEventListener('click', () => {
     landingPage.style.display = 'none';
-    levelSelectionPage.style.display = 'flex';
-    levelButtonsContainer.scrollTop = 0;
+    menuPage.style.display = 'flex';
 });
 
 homeBtn.addEventListener('click', () => {
-    [levelSelectionPage, hanjaGridPage].forEach(p => p.style.display = 'none');
+    [menuPage, levelSelectionPage, hanjaGridPage, quizPage, hanjaWordPage, findHanjaPage].forEach(p => p.style.display = 'none');
     landingPage.style.display = 'flex';
 });
 
-// Re-fetch level buttons after adding 준3급 dynamically if needed, or ensure it's hardcoded
+levelSelectionBtn.addEventListener('click', () => {
+    menuPage.style.display = 'none';
+    levelSelectionPage.style.display = 'flex';
+});
+
+quizBtn.addEventListener('click', () => {
+    menuPage.style.display = 'none';
+    quizPage.style.display = 'flex';
+    populateQuizLevelSelect();
+    generateQuiz();
+    quizScore = 0;
+    quizScoreEl.textContent = `점수: ${quizScore}`;
+});
+
+hanjaWordBtn.addEventListener('click', () => {
+    menuPage.style.display = 'none';
+    hanjaWordPage.style.display = 'flex';
+});
+
+findHanjaBtn.addEventListener('click', () => {
+    menuPage.style.display = 'none';
+    findHanjaPage.style.display = 'flex';
+});
+
+backToMenuFromLevelsBtn.addEventListener('click', () => {
+    levelSelectionPage.style.display = 'none';
+    menuPage.style.display = 'flex';
+});
+
+backToMenuFromQuizBtn.addEventListener('click', () => {
+    quizPage.style.display = 'none';
+    menuPage.style.display = 'flex';
+});
+
+backToMenuFromHanjaWordBtn.addEventListener('click', () => {
+    hanjaWordPage.style.display = 'none';
+    menuPage.style.display = 'flex';
+});
+
+backToMenuFromFindHanjaBtn.addEventListener('click', () => {
+    findHanjaPage.style.display = 'none';
+    menuPage.style.display = 'flex';
+});
+
 document.querySelectorAll('.level-btn').forEach(button => {
     button.addEventListener('click', () => {
         const level = button.textContent;
@@ -267,11 +479,9 @@ window.addEventListener('click', (event) => {
 hanjaGrid.addEventListener('click', (event) => {
     const gridRow = event.target.closest('.grid-row');
     if (gridRow) {
-        // Check if the click is on a cell, but not on a hidden one for opening the modal
         const clickedCell = event.target.closest('.grid-item');
         if (!clickedCell) return;
 
-        // Modal should still open even if some parts are hidden. The hanja-cell is the key.
         const hanjaCell = gridRow.querySelector('.hanja-cell');
         if (hanjaCell) {
             const hanjaChar = hanjaCell.textContent;
@@ -291,3 +501,39 @@ canvas.addEventListener('mouseout', stopDrawing);
 canvas.addEventListener('touchstart', startDrawing, { passive: false });
 canvas.addEventListener('touchmove', draw, { passive: false });
 canvas.addEventListener('touchend', stopDrawing);
+
+// Quiz Event Listeners
+quizLevelSelect.addEventListener('change', generateQuiz);
+quizOptions.addEventListener('click', (event) => {
+    if (event.target.classList.contains('quiz-option-btn')) {
+        checkQuizAnswer(event.target.dataset.hanja);
+    }
+});
+
+// Search Event Listeners
+searchBtn.addEventListener('click', searchHanja);
+searchInput.addEventListener('keyup', (event) => {
+    if (event.key === 'Enter') {
+        searchHanja();
+    }
+});
+
+searchResults.addEventListener('click', (event) => {
+    const resultRow = event.target.closest('.search-result-row');
+    if (resultRow) {
+        const hanjaChar = resultRow.children[1].textContent;
+        let hanjaItem = null;
+
+        for (const level in hanjaData) {
+            const found = hanjaData[level].find(item => item.hanja === hanjaChar);
+            if (found) {
+                hanjaItem = found;
+                break;
+            }
+        }
+
+        if (hanjaItem) {
+            openModal(hanjaItem);
+        }
+    }
+});
