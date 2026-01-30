@@ -1,144 +1,89 @@
-
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hanja Study</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Yeon+Sung&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/hanzi-writer@3.5/dist/hanzi-writer.min.js"></script>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5684980808299397"
-     crossorigin="anonymous"></script>
-</head>
-<body>
-    <div class="container" id="landing-page">
-        <h1 class="logo">한자공부</h1>
-        <p class="welcome-message">예아뜨 아가들을 위한 공부방</p>
-        <p class="welcome-message">열심히 공부 해봐요</p>
-        <button id="enter-btn">입장</button>
-    </div>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Welcome to Firebase Hosting</title>
 
-    <div class="container" id="menu-page" style="display: none;">
-        <h2 class="title">메뉴</h2>
-        <div class="menu-buttons">
-            <button class="menu-btn" id="level-selection-btn">급수 선택</button>
-            <button class="menu-btn" id="quiz-btn">퀴즈</button>
-            <button class="menu-btn" id="hanja-word-btn">한자낱말</button>
-            <button class="menu-btn" id="find-hanja-btn">한자 찾기</button>
-        </div>
-    </div>
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/12.8.0/firebase-app-compat.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <script defer src="/__/firebase/12.8.0/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/12.8.0/firebase-database-compat.js"></script>
+    <script defer src="/__/firebase/12.8.0/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/12.8.0/firebase-functions-compat.js"></script>
+    <script defer src="/__/firebase/12.8.0/firebase-messaging-compat.js"></script>
+    <script defer src="/__/firebase/12.8.0/firebase-storage-compat.js"></script>
+    <script defer src="/__/firebase/12.8.0/firebase-analytics-compat.js"></script>
+    <script defer src="/__/firebase/12.8.0/firebase-remote-config-compat.js"></script>
+    <script defer src="/__/firebase/12.8.0/firebase-performance-compat.js"></script>
+    <!-- 
+      initialize the SDK after all desired features are loaded, set useEmulator to false
+      to avoid connecting the SDK to running emulators.
+    -->
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
 
-    <div class="container" id="level-selection-page" style="display: none;">
-        <button id="home-btn">home</button>
-        <h2 class="title">급수선택</h2>
-        <p class="level-selection-subtitle">학습 할 급수를 선택 해주세요.</p>
-        <div class="level-buttons">
-            <button class="level-btn">8급</button>
-            <button class="level-btn">준7급</button>
-            <button class="level-btn">7급</button>
-            <button class="level-btn">준6급</button>
-            <button class="level-btn">6급</button>
-            <button class="level-btn">준5급</button>
-            <button class="level-btn">5급</button>
-            <button class="level-btn">준4급</button>
-            <button class="level-btn">4급</button>
-            <button class="level-btn">준3급</button>
-            <button class="level-btn">3급</button>
-            <button class="level-btn">2급</button>
-            <button class="level-btn">1급</button>
-            <button class="level-btn">특급</button>
-        </div>
-        <button id="back-to-menu-from-levels-btn">메뉴로 돌아가기</button>
+    <style media="screen">
+      body { background: #ECEFF1; color: rgba(0,0,0,0.87); font-family: Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+      #message { background: white; max-width: 360px; margin: 100px auto 16px; padding: 32px 24px; border-radius: 3px; }
+      #message h2 { color: #ffa100; font-weight: bold; font-size: 16px; margin: 0 0 8px; }
+      #message h1 { font-size: 22px; font-weight: 300; color: rgba(0,0,0,0.6); margin: 0 0 16px;}
+      #message p { line-height: 140%; margin: 16px 0 24px; font-size: 14px; }
+      #message a { display: block; text-align: center; background: #039be5; text-transform: uppercase; text-decoration: none; color: white; padding: 16px; border-radius: 4px; }
+      #message, #message a { box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24); }
+      #load { color: rgba(0,0,0,0.4); text-align: center; font-size: 13px; }
+      @media (max-width: 600px) {
+        body, #message { margin-top: 0; background: white; box-shadow: none; }
+        body { border-top: 16px solid #ffa100; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="message">
+      <h2>Welcome</h2>
+      <h1>Firebase Hosting Setup Complete</h1>
+      <p>You're seeing this because you've successfully setup Firebase Hosting. Now it's time to go build something extraordinary!</p>
+      <a target="_blank" href="https://firebase.google.com/docs/hosting/">Open Hosting Documentation</a>
     </div>
+    <p id="load">Firebase SDK Loading&hellip;</p>
 
-    <div class="container" id="hanja-grid-page" style="display: none;">
-        <div id="grid-header">
-            <h2 id="grid-title"></h2>
-            <span id="hanja-count"></span>
-        </div>
-        <div id="grid-controls">
-            <button id="back-to-levels-btn">뒤로가기</button>
-        </div>
-        <div id="hanja-grid-container">
-            <div class="hanja-grid-header">
-                <div class="grid-item">순번</div>
-                <div class="grid-item">
-                    <span>한자</span>
-                    <button id="toggle-hanja-btn" class="toggle-vis-btn">
-                        <svg class="icon-eye-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        <svg class="icon-eye-closed hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
-                    </button>
-                </div>
-                <div class="grid-item">
-                    <span>훈</span>
-                    <button id="toggle-hun-btn" class="toggle-vis-btn">
-                        <svg class="icon-eye-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        <svg class="icon-eye-closed hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
-                    </button>
-                </div>
-                <div class="grid-item">
-                    <span>음</span>
-                    <button id="toggle-eum-btn" class="toggle-vis-btn">
-                        <svg class="icon-eye-open" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                        <svg class="icon-eye-closed hidden" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"></path><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"></path><line x1="2" x2="22" y1="2" y2="22"></line></svg>
-                    </button>
-                </div>
-                <div class="grid-item">획수</div>
-            </div>
-            <div id="hanja-grid"></div>
-        </div>
-    </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        const loadEl = document.querySelector('#load');
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
+        // // The Firebase SDK is initialized and available here!
+        //
+        // firebase.auth().onAuthStateChanged(user => { });
+        // firebase.database().ref('/path/to/ref').on('value', snapshot => { });
+        // firebase.firestore().doc('/foo/bar').get().then(() => { });
+        // firebase.functions().httpsCallable('yourFunction')().then(() => { });
+        // firebase.messaging().requestPermission().then(() => { });
+        // firebase.storage().ref('/path/to/ref').getDownloadURL().then(() => { });
+        // firebase.analytics(); // call to activate
+        // firebase.analytics().logEvent('tutorial_completed');
+        // firebase.performance(); // call to activate
+        //
+        // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
-    <!-- Hanja Modal -->
-    <div id="hanja-modal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close-btn">&times;</span>
-            <p id="modal-hanja"></p>
-            <p id="modal-details"></p>
-            <div id="stroke-order-animation"></div>
-            <canvas id="writing-canvas"></canvas>
-            <div class="modal-buttons">
-                <button id="toggle-stroke-order-btn">획순보기</button>
-                <button id="reset-canvas-btn">다시쓰기</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="container" id="quiz-page" style="display: none;">
-        <h2 class="title">퀴즈</h2>
-        <div id="quiz-controls">
-            <select id="quiz-level-select"></select>
-            <span id="quiz-score">점수: 0</span>
-        </div>
-        <div id="quiz-question"></div>
-        <div id="quiz-options">
-            <button class="quiz-option-btn"></button>
-            <button class="quiz-option-btn"></button>
-            <button class="quiz-option-btn"></button>
-            <button class="quiz-option-btn"></button>
-        </div>
-        <div id="quiz-result"></div>
-        <button id="back-to-menu-from-quiz-btn">메뉴로 돌아가기</button>
-    </div>
-
-    <div class="container" id="hanja-word-page" style="display: none;">
-        <h2 class="title">한자낱말</h2>
-        <p>한자낱말 기능은 현재 준비중입니다.</p>
-        <button id="back-to-menu-from-hanja-word-btn">메뉴로 돌아가기</button>
-    </div>
-
-    <div class="container" id="find-hanja-page" style="display: none;">
-        <h2 class="title">한자 찾기</h2>
-        <div id="search-bar">
-            <input type="text" id="search-input" placeholder="한자, 훈, 음으로 검색">
-            <button id="search-btn">찾기</button>
-        </div>
-        <div id="search-results"></div>
-        <button id="back-to-menu-from-find-hanja-btn">메뉴로 돌아가기</button>
-    </div>
-
-    <script type="module" src="main.js"></script>
-</body>
+        try {
+          let app = firebase.app();
+          let features = [
+            'auth', 
+            'database', 
+            'firestore',
+            'functions',
+            'messaging', 
+            'storage', 
+            'analytics', 
+            'remoteConfig',
+            'performance',
+          ].filter(feature => typeof app[feature] === 'function');
+          loadEl.textContent = `Firebase SDK loaded with ${features.join(', ')}`;
+        } catch (e) {
+          console.error(e);
+          loadEl.textContent = 'Error loading the Firebase SDK, check the console.';
+        }
+      });
+    </script>
+  </body>
 </html>
