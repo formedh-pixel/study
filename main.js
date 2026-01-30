@@ -1,6 +1,7 @@
 
 import { hanjaData } from './data.js';
 import { idiomData } from './idioms.js';
+import { wordData } from './words.js';
 
 let currentLevelData = [];
 let currentHanja = null;
@@ -62,6 +63,7 @@ let isDrawing = false;
 // Quiz Elements
 const quizLevelFromSelect = document.getElementById('quiz-level-from');
 const quizLevelToSelect = document.getElementById('quiz-level-to');
+const quizContentTypeSelect = document.getElementById('quiz-content-type-select');
 const quizTypeSelect = document.getElementById('quiz-type-select');
 const quizScoreEl = document.getElementById('quiz-score');
 const quizQuestion = document.getElementById('quiz-question');
@@ -287,11 +289,13 @@ function populateQuizLevelSelects() {
 function generateQuiz() {
     const fromLevel = quizLevelFromSelect.value;
     const toLevel = quizLevelToSelect.value;
+    const contentType = quizContentTypeSelect.value;
     const quizType = quizTypeSelect.value;
     const fromIndex = levelOrder.indexOf(fromLevel);
     const toIndex = levelOrder.indexOf(toLevel);
 
     let quizData = [];
+    const sourceData = contentType === 'hanja' ? hanjaData : wordData;
 
     if (fromIndex > toIndex) {
         quizQuestion.textContent = '시작 급수를 종료 급수보다 낮게 설정해주세요.';
@@ -302,8 +306,8 @@ function generateQuiz() {
 
     for (let i = fromIndex; i <= toIndex; i++) {
         const level = levelOrder[i];
-        if (hanjaData[level]) {
-            quizData = quizData.concat(hanjaData[level]);
+        if (sourceData[level]) {
+            quizData = quizData.concat(sourceData[level]);
         }
     }
 
@@ -314,18 +318,18 @@ function generateQuiz() {
         return;
     }
 
-    // Select a random hanja for the question
+    // Select a random item for the question
     const questionIndex = Math.floor(Math.random() * quizData.length);
-    const questionHanja = quizData[questionIndex];
-    quizQuestion.dataset.hanja = questionHanja.hanja; // Store the correct hanja in a data attribute
+    const questionItem = quizData[questionIndex];
+    quizQuestion.dataset.hanja = questionItem.hanja;
 
     // Create options
-    let options = [questionHanja];
+    let options = [questionItem];
     while (options.length < 4) {
         const randomIndex = Math.floor(Math.random() * quizData.length);
-        const randomHanja = quizData[randomIndex];
-        if (!options.some(opt => opt.hanja === randomHanja.hanja)) {
-            options.push(randomHanja);
+        const randomItem = quizData[randomIndex];
+        if (!options.some(opt => opt.hanja === randomItem.hanja)) {
+            options.push(randomItem);
         }
     }
 
@@ -335,23 +339,44 @@ function generateQuiz() {
     const optionButtons = quizOptions.querySelectorAll('.quiz-option-btn');
     optionButtons.forEach(button => button.classList.remove('hanja-option'));
 
-    if (quizType === 'hanja-to-hun-eum') {
-        quizQuestion.textContent = questionHanja.hanja;
-        quizQuestion.style.fontSize = '80px';
+    if (contentType === 'hanja') {
+        if (quizType === 'hanja-to-hun-eum') {
+            quizQuestion.textContent = questionItem.hanja;
+            quizQuestion.style.fontSize = '80px';
 
-        optionButtons.forEach((button, index) => {
-            button.textContent = `${options[index].hun} ${options[index].eum}`;
-            button.dataset.hanja = options[index].hanja;
-        });
-    } else { // hun-eum-to-hanja
-        quizQuestion.textContent = `${questionHanja.hun} ${questionHanja.eum}`;
-        quizQuestion.style.fontSize = '24px';
+            optionButtons.forEach((button, index) => {
+                button.textContent = `${options[index].hun} ${options[index].eum}`;
+                button.dataset.hanja = options[index].hanja;
+            });
+        } else { // hun-eum-to-hanja
+            quizQuestion.textContent = `${questionItem.hun} ${questionItem.eum}`;
+            quizQuestion.style.fontSize = '24px';
 
-        optionButtons.forEach((button, index) => {
-            button.textContent = options[index].hanja;
-            button.dataset.hanja = options[index].hanja;
-            button.classList.add('hanja-option');
-        });
+            optionButtons.forEach((button, index) => {
+                button.textContent = options[index].hanja;
+                button.dataset.hanja = options[index].hanja;
+                button.classList.add('hanja-option');
+            });
+        }
+    } else { // word
+        if (quizType === 'hanja-to-hun-eum') { // hanja -> meaning
+            quizQuestion.textContent = questionItem.hanja;
+            quizQuestion.style.fontSize = '80px';
+
+            optionButtons.forEach((button, index) => {
+                button.textContent = options[index].meaning;
+                button.dataset.hanja = options[index].hanja;
+            });
+        } else { // meaning -> hanja
+            quizQuestion.textContent = questionItem.meaning;
+            quizQuestion.style.fontSize = '24px';
+
+            optionButtons.forEach((button, index) => {
+                button.textContent = options[index].hanja;
+                button.dataset.hanja = options[index].hanja;
+                button.classList.add('hanja-option');
+            });
+        }
     }
 
     optionButtons.forEach(button => {
@@ -704,6 +729,7 @@ canvas.addEventListener('touchend', stopDrawing);
 // Quiz Event Listeners
 quizLevelFromSelect.addEventListener('change', generateQuiz);
 quizLevelToSelect.addEventListener('change', generateQuiz);
+quizContentTypeSelect.addEventListener('change', generateQuiz);
 quizTypeSelect.addEventListener('change', generateQuiz);
 
 quizOptions.addEventListener('click', (event) => {
