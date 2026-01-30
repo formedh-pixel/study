@@ -50,7 +50,16 @@
             <button class="level-btn">1급</button>
             <button class="level-btn">특급</button>
         </div>
-        <button id="back-to-menu-from-levels-btn">메뉴로 돌아가기</button>
+        <div class="page-nav-buttons">
+            <button id="view-abbreviations-btn">약어보기</button>
+            <button id="back-to-menu-from-levels-btn">메뉴로 돌아가기</button>
+        </div>
+    </div>
+
+    <div class="container" id="abbreviations-page" style="display: none;">
+        <h2 class="title">약어 보기</h2>
+        <div id="abbreviations-grid"></div>
+        <button id="back-to-levels-from-abbreviations-btn">급수선택으로 돌아가기</button>
     </div>
 
     <div class="container" id="hanja-grid-page" style="display: none;">
@@ -172,7 +181,18 @@
         </div>
     </div>
 
+    <!-- Idiom Modal -->
+    <div id="idiom-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <p id="modal-idiom-hanja"></p>
+            <p id="modal-idiom-eum"></p>
+            <p id="modal-idiom-meaning"></p>
+        </div>
+    </div>
+
     <script type="module" src="main.js"></script>
+    <script type="module" src="abbreviations.js"></script>
     <script type="module" src="words.js"></script>
 </body>
 </html>
